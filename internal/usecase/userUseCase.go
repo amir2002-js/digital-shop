@@ -7,5 +7,5 @@ import (
 
 type UserUseCase interface {
 	Register(ctx context.Context, user *users.User) (*users.User, error)
-	Login(ctx context.Context, user *users.User) error
+	Login(ctx context.Context, email string) (*users.User, error)
 }

@@ -3,6 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/amir2002-js/digital-shop/internal/interface/http"
+	"github.com/amir2002-js/digital-shop/internal/interface/http/handler"
+	usersHandler "github.com/amir2002-js/digital-shop/internal/interface/http/handler/user"
+	"github.com/amir2002-js/digital-shop/internal/repository"
+	usersServices "github.com/amir2002-js/digital-shop/internal/services/users"
 	migrationsPkg "github.com/amir2002-js/digital-shop/pkg"
 	"log"
 	"os"
@@ -35,9 +39,17 @@ func main() {
 	validation := validator.New()
 	fmt.Print(validation)
 
+	repo := repository.NewGormDb(db)
+
+	userServe := usersServices.NewUsersServices(repo)
+
+	userHndlr := usersHandler.NewUsersHandler(userServe)
+
+	mainHandler := handler.NewHandler(userHndlr)
+
 	app := fiber.New()
 
-	http.Router(app)
+	http.Router(app, mainHandler)
 
 	log.Fatal(app.Listen(":3000"))
 }

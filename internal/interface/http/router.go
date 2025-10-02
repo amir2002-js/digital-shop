@@ -1,8 +1,11 @@
 package http
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/amir2002-js/digital-shop/internal/interface/http/handler"
+	"github.com/gofiber/fiber/v2"
+)
 
-func Router(app *fiber.App) {
+func Router(app *fiber.App, handler *handler.Handler) {
 
 	v1 := app.Group("/api/v1")
 	{
@@ -12,7 +15,7 @@ func Router(app *fiber.App) {
 			adminContact.Put("/", nil)
 			adminContact.Post("/", nil)
 		}
-		
+
 		login := v1.Group("/login")
 		{
 			login.Post("/", nil)

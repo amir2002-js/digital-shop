@@ -20,6 +20,6 @@ func (serve *UsersServices) Register(ctx context.Context, user *users.User) (*us
 	return serve.Repo.Register(ctx, user)
 }
 
-func (serve *UsersServices) Login(ctx context.Context, user *users.User) error {
-	return serve.Repo.Login(ctx, user)
+func (serve *UsersServices) Login(ctx context.Context, email string) (*users.User, error) {
+	return serve.Repo.Login(ctx, email)
 }
