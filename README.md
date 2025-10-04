@@ -1,27 +1,32 @@
-# 🛒 Digital Shop — Backend (Go + Fiber + PostgreSQL + Redis)
+🏪 Digital Shop — Backend (Go + Fiber + PostgreSQL + Redis + Docker)
 
-**Digital Shop** is a secure and scalable e-commerce backend built with **Go (Fiber)**.  
-It follows **Clean Architecture**, uses **PostgreSQL** for data persistence, **Redis** for caching, and **JWT** for authentication.
+High-performance e-commerce backend built with Go (Fiber), PostgreSQL, and Redis, designed for scalability, clean architecture, and production-grade deployment via Docker Compose.
 
-Built for performance, maintainability, and real-world deployment.
+🧠 Tech Stack
+Layer	Technology
+Language	Go 1.22+
+Framework	Fiber v2
+Database	PostgreSQL 14+
+Cache	Redis 7+
+ORM	GORM
+Validation	go-playground/validator
+Security	JWT, bcrypt, bluemonday
+Containerization	Docker & Docker Compose
+⚙️ Architecture Overview
 
----
+Clean Architecture (a.k.a. Hexagonal) — separation of concerns between:
 
-## 🚀 Features
+Domain → Core business entities.
 
-- 🔐 JWT Authentication (Access & Refresh Tokens)
-- 🧩 Role-Based Access (admin / user)
-- 🧼 XSS Protection using bluemonday
-- 🧱 Clean Architecture (Domain → Usecase → Repository → Interface)
-- 🧠 Input Validation with validator
-- 🧰 Secure Password Hashing (bcrypt)
-- 🐘 PostgreSQL + 🧊 Redis integration
-- 🐳 Docker support for local and production environments
+Usecase → Application logic.
 
----
+Service → Business-level operations.
 
-## 🧭 Project Structure
-```bash
+Repository → Data access layer (PostgreSQL & Redis).
+
+Interface/HTTP → API layer (Fiber).
+
+🗂️ Project Structure
 .
 ├── cmd/
 │   └── main.go                      # Entry point
@@ -46,6 +51,8 @@ Built for performance, maintainability, and real-world deployment.
 │   │   └── users/
 │   │
 │   ├── usecase/                     # Application usecases
+│   │   ├── cache.go
+│   │   └── userUseCase.go
 │   │
 │   └── interface/
 │       └── http/                    # HTTP layer
@@ -69,110 +76,141 @@ Built for performance, maintainability, and real-world deployment.
 ├── LICENSE
 └── README.md
 
+🔐 Environment Variables
 
----
+All configuration is handled via .env file:
 
-## ⚙️ Environment Variables
-
-| Variable | Description |
-|-----------|-------------|
-| `POSTGRES_DB` | Database name |
-| `POSTGRES_PORT` | Database port (default: 5432) |
-| `POSTGRES_HOST` | Database host (`localhost` or `db`) |
-| `POSTGRES_USER` | Database username |
-| `POSTGRES_PASSWORD` | Database password |
-| `ACCESS_TOKEN` | Secret key for signing Access Tokens |
-| `REFRESH_TOKEN` | Secret key for signing Refresh Tokens |
-| `USERNAME_ADMIN` | Default admin username |
-| `PASSWORD_ADMIN` | Default admin password |
-| `EMAIL_ADMIN` | Default admin email |
-| `REDIS_ADDR` | Redis address (e.g. `redis:6379`) |
-| `REDIS_PASSWORD` | Redis password (if set) |
-
-### 🧩 Example `.env`
-
-```env
+# Database
 POSTGRES_DB=digital_shop
 POSTGRES_PORT=5432
 POSTGRES_HOST=db
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=secret
 
-ACCESS_TOKEN=your_access_secret
-REFRESH_TOKEN=your_refresh_secret
+# JWT
+REFRESH_TOKEN=supersecret_refresh
+ACCESS_TOKEN=supersecret_access
 
+# Admin Account (auto-detected)
 USERNAME_ADMIN=admin
-PASSWORD_ADMIN=supersecret
-EMAIL_ADMIN=admin@shop.com
+PASSWORD_ADMIN=admin123
+EMAIL_ADMIN=admin@digital-shop.com
 
+# Redis
 REDIS_ADDR=redis:6379
-REDIS_PASSWORD=
-🐳 Run with Docker
-1️⃣ Build and start services
-docker-compose up --build
-2️⃣ Run database migrations
+REDIS_PASSWORD=redispass
+
+🧩 Features
+
+✅ User Authentication
+
+Register / Login with validation
+
+Password hashing with bcrypt
+
+Role-based access (user, admin)
+
+JWT Access & Refresh tokens
+
+Input sanitization via bluemonday
+
+✅ Products (planned)
+
+CRUD operations
+
+Search, pagination, filters
+
+✅ Caching
+
+Redis-based caching layer for performance boost
+
+✅ Docker Ready
+
+One command deployment with docker compose up
+
+✅ Clean Code
+
+No spaghetti. Fully layered, testable, and extensible.
+
+🚀 Getting Started
+1️⃣ Clone the repo
+git clone https://github.com/<your_username>/digital-shop-backend.git
+cd digital-shop-backend
+
+2️⃣ Configure .env
+
+Copy .env.example or create your own .env file (see above).
+
+3️⃣ Start via Docker
+docker compose up --build
+
+
+This will start:
+
+db (PostgreSQL)
+
+redis (Redis cache)
+
+app (Go Fiber API)
+
+4️⃣ Run migrations
 go run ./pkg/runMigrations.go
-3️⃣ Access the API
-http://localhost:8080
-🔑 Authentication
-Token Type	Lifetime	Description
-Access Token	⏱ 5 minutes	Used for authorized API calls
-Refresh Token	🕒 15 days	Used to renew access tokens
 
-Each token contains:
+🧠 JWT Structure Example
 
-exp — Expiration timestamp
+Access Token (valid 5 minutes)
+Refresh Token (valid 15 days)
 
-iat — Issued-at timestamp
+Claims:
 
-iss — Issuer (digital-shop)
+{
+  "user_id": 123,
+  "role": "admin",
+  "exp": 1736012452,
+  "iat": 1736012152,
+  "iss": "digital-shop"
+}
 
-📡 API Overview
-Endpoint	Method	Description	Auth
-/register	POST	Register a new user	❌
-/login	POST	Login and receive tokens	❌
-/products	GET	List all products	✅
-/products/:id	GET	Product details	✅
+🧪 API Example
+Register User
 
-🧱 Tech Stack
-Layer	Technology
-Language	Go 1.23+
-Web Framework	Fiber
-Database	PostgreSQL
-Cache	Redis
-Auth	JWT
-Container	Docker
-Security	bluemonday, bcrypt
+POST /api/v1/users/register
 
-🧹 Future Plans
-⚛️ Frontend with React or Next.js
+{
+  "username": "amirreza",
+  "email": "amir@example.com",
+  "password": "strongpassword",
+  "confirm_password": "strongpassword"
+}
 
-🛍️ Add product categories and cart system
 
-🧪 Unit and integration tests
+✅ Response:
 
-📘 Swagger API Documentation
+{
+  "data": {
+    "id": 1,
+    "username": "amirreza",
+    "email": "amir@example.com",
+    "role": "user"
+  },
+  "access_token": "<JWT_ACCESS_TOKEN>",
+  "refresh_token": "<JWT_REFRESH_TOKEN>"
+}
 
-⚙️ CI/CD pipeline (GitHub Actions)
+🧱 Future Plans
 
-🧠 Architecture Summary
-Digital Shop follows Clean Architecture:
+ Full product module
 
-Domain — Core entities and business logic
+ Order & payment system
 
-Usecase — Application-level logic (use cases)
+ Role-based middlewares
 
-Repository — Data access layer (Postgres / Redis)
+ Logging & metrics
 
-Interface — HTTP layer (Fiber handlers, middleware, utils)
+ Frontend (React or Next.js)
 
-🪪 License
-MIT License
-Copyright (c) 2025
-See LICENSE for more details.
+🧑‍💻 Author
 
-💬 Author
-Amir 2002
-📧 amir2002-js
-🧠 Backend Developer — Go / Fiber / PostgreSQL / Docker
+Amirreza — Digital Shop Backend
 
+🌍 github.com/amir2002-js
