@@ -20,3 +20,7 @@ func CanNotConnectToDB(c *fiber.Ctx, err error) error {
 func AlreadyExisted(c *fiber.Ctx) error {
 	return c.Status(http.StatusConflict).JSON(fiber.Map{"error": "email is already exist"})
 }
+
+func InternalError(c *fiber.Ctx, err error) error {
+	return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "internal error", "message": err.Error()})
+}

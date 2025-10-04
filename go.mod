@@ -3,6 +3,7 @@ module github.com/amir2002-js/digital-shop
 go 1.25.1
 
 require (
+	github.com/form3tech-oss/jwt-go v3.2.5+incompatible
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/gofiber/fiber/v2 v2.52.9
 	github.com/golang-migrate/migrate/v4 v4.19.0

@@ -28,14 +28,14 @@ func (r *GormDb) Login(ctx context.Context, email string) (*users.User, error) {
 	return &ourUser, nil
 }
 
-func (r *GormDb) IsEmailExist(ctx context.Context, email string) (bool, error) {
+func (r *GormDb) IsEmailExist(ctx context.Context, email string) (*users.User, error) {
 	var user users.User
 	result := r.DB.WithContext(ctx).First(&user, "email = ?", email)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return false, nil
+			return nil, nil
 		}
-		return false, result.Error
+		return nil, result.Error
 	}
-	return true, nil
+	return &user, nil
 }

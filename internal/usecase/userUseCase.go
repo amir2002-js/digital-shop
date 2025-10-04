@@ -8,5 +8,5 @@ import (
 type UserUseCase interface {
 	Register(ctx context.Context, user *users.User) (*users.User, error)
 	Login(ctx context.Context, email string) (*users.User, error)
-	IsEmailExist(ctx context.Context, email string) (bool, error)
+	IsEmailExist(ctx context.Context, email string) (*users.User, error)
 }

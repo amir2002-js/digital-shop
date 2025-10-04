@@ -24,6 +24,6 @@ func (serve *UsersServices) Login(ctx context.Context, email string) (*users.Use
 	return serve.Repo.Login(ctx, email)
 }
 
-func (serve *UsersServices) IsEmailExist(ctx context.Context, email string) (bool, error) {
+func (serve *UsersServices) IsEmailExist(ctx context.Context, email string) (*users.User, error) {
 	return serve.Repo.IsEmailExist(ctx, email)
 }

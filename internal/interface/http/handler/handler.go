@@ -5,9 +5,9 @@ import (
 )
 
 type Handler struct {
-	userHandler *usersHandler.UsersHandler
+	User *usersHandler.UsersHandler
 }
 
-func NewHandler(userHandler *usersHandler.UsersHandler) *Handler {
-	return &Handler{userHandler: userHandler}
+func NewHandler(user *usersHandler.UsersHandler) *Handler {
+	return &Handler{User: user}
 }

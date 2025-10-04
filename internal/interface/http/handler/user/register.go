@@ -41,13 +41,14 @@ func (handler *UsersHandler) Register(c *fiber.Ctx) error {
 		return returnsHandler.InvalidationData(c, err)
 	}
 
+	// ایا ایمیل وجود داره؟
 	ctx := c.Context()
-	emailIsExist, err := handler.h.IsEmailExist(ctx, entryUser.Email)
+	userFounded, err := handler.h.IsEmailExist(ctx, entryUser.Email)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return returnsHandler.InternalError(c, err)
 	}
 
-	if emailIsExist {
+	if userFounded != nil {
 		return returnsHandler.AlreadyExisted(c)
 	}
 
@@ -56,7 +57,7 @@ func (handler *UsersHandler) Register(c *fiber.Ctx) error {
 	ok, err := whoIs.IsAdmin(entryUser.Password, entryUser.Email, entryUser.Username)
 	if err != nil {
 		if err.Error() == "credentials not set in environment variables" {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+			return returnsHandler.InternalError(c, err)
 		}
 		return returnsHandler.AlreadyExisted(c)
 	}
@@ -64,7 +65,7 @@ func (handler *UsersHandler) Register(c *fiber.Ctx) error {
 	// هش کردن پسورد
 	hashedPass, err := password.HashPassword(entryUser.Password)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return returnsHandler.InternalError(c, err)
 	}
 
 	// مقدار دهی یوزر جدید
@@ -87,13 +88,13 @@ func (handler *UsersHandler) Register(c *fiber.Ctx) error {
 	// ساخت توکن accessTkn
 	accessTkn, err := jwtToken.GenerateJWTAccessTkn(insertUser)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return returnsHandler.InternalError(c, err)
 	}
 
 	// ساخت توکن refreshTkn
 	refreshTkn, err := jwtToken.GenerateJWTRefreshTkn(insertUser)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return returnsHandler.InternalError(c, err)
 	}
 
 	return c.Status(http.StatusCreated).JSON(fiber.Map{"data": insertUser, "access_token": accessTkn, "refresh_token": refreshTkn})
