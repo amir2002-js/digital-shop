@@ -109,6 +109,7 @@ REDIS_ADDR=redis:6379
 REDIS_PASSWORD=redispass if you have
 ```
 
+```bash
 🐳 Run with Docker
 1️⃣ Build and start services
 docker-compose up --build
@@ -129,12 +130,16 @@ iat — Issued-at timestamp
 
 iss — Issuer (digital-shop)
 
+```
+
 📡 API Overview
-Endpoint	Method	Description	Auth
-/register	POST	Register a new user	❌
-/login	POST	Login and receive tokens	❌
-/products	GET	List all products	✅
-/products/:id	GET	Product details	✅
+```bash
+Endpoint	    Method	Description	Auth
+/register	    POST	Register a new user	❌
+/login	        POST	Login and receive tokens	❌
+/products	    GET	    List all products	✅
+/products/:id	GET	    Product details	✅
+```
 
 🧱 Tech Stack
 Layer	Technology
