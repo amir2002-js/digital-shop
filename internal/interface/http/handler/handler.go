@@ -1,7 +1,7 @@
 package handler
 
 import (
-	usersHandler "github.com/amir2002-js/digital-shop/internal/interface/http/handler/user"
+	"github.com/amir2002-js/digital-shop/internal/interface/http/handler/user"
 )
 
 type Handler struct {
