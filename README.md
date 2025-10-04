@@ -106,7 +106,9 @@ PASSWORD_ADMIN=supersecret
 EMAIL_ADMIN=admin@shop.com
 
 REDIS_ADDR=redis:6379
-REDIS_PASSWORD=
+REDIS_PASSWORD=redispass if you have
+```
+
 🐳 Run with Docker
 1️⃣ Build and start services
 docker-compose up --build
