@@ -21,28 +21,54 @@ Built for performance, maintainability, and real-world deployment.
 ---
 
 ## 🧭 Project Structure
-
+```bash
 .
 ├── cmd/
-│ └── main.go # Entry point
+│   └── main.go                      # Entry point
+│
 ├── db/
-│ └── migrations/ # SQL migrations
-│ ├── 000001_create_users.up.sql
-│ └── 000001_create_users.down.sql
+│   └── migrations/                  # SQL migrations
+│       ├── 000001_create_users.up.sql
+│       └── 000001_create_users.down.sql
+│
 ├── internal/
-│ ├── domain/ # Entities (core models)
-│ ├── repository/ # PostgreSQL & Redis repositories
-│ ├── services/ # Business services
-│ ├── usecase/ # Application usecases
-│ └── interface/http/ # HTTP layer
-│ ├── handler/
-│ ├── middleware/
-│ └── util/
-├── pkg/ # Shared utilities (dsn, migrations)
+│   ├── domain/                      # Entities (core models)
+│   │   ├── products/
+│   │   └── users/
+│   │
+│   ├── repository/                  # PostgreSQL & Redis repositories
+│   │   ├── cache/
+│   │   └── postgres/
+│   │
+│   ├── services/                    # Business services
+│   │   ├── cache/
+│   │   ├── products/
+│   │   └── users/
+│   │
+│   ├── usecase/                     # Application usecases
+│   │
+│   └── interface/
+│       └── http/                    # HTTP layer
+│           ├── handler/
+│           │   ├── products/
+│           │   └── user/
+│           ├── middleware/
+│           └── util/
+│               ├── jwtToken/
+│               ├── password/
+│               ├── returnsHandler/
+│               └── whoIs/
+│
+├── pkg/                             # Shared utilities (dsn, migrations)
+│
 ├── Dockerfile
 ├── docker-compose.yml
 ├── .env
-└── go.mod
+├── go.mod
+├── go.sum
+├── LICENSE
+└── README.md
+
 
 ---
 
