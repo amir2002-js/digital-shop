@@ -16,3 +16,7 @@ func InvalidationData(c *fiber.Ctx, err error) error {
 func CanNotConnectToDB(c *fiber.Ctx, err error) error {
 	return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "cannot connect to database", "message": err.Error()})
 }
+
+func AlreadyExisted(c *fiber.Ctx) error {
+	return c.Status(http.StatusConflict).JSON(fiber.Map{"error": "email is already exist"})
+}
