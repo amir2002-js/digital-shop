@@ -20,11 +20,11 @@ func (serve *ProductsService) ReadById(ctx context.Context, productId int) (*pro
 	return serve.Repo.ReadById(ctx, productId)
 }
 
-func (serve *ProductsService) Create(ctx context.Context, product *products.Product) (*products.Product, error) {
+func (serve *ProductsService) Create(ctx context.Context, product *products.Product) error {
 	return serve.Repo.Create(ctx, product)
 }
 
-func (serve *ProductsService) Update(ctx context.Context, product *products.Product) (*products.Product, error) {
+func (serve *ProductsService) Update(ctx context.Context, product *products.Product) error {
 	return serve.Repo.Update(ctx, product)
 }
 
