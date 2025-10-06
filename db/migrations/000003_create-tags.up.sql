@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS tags (
+    id BIGSERIAL PRIMARY KEY ,
+    name VARCHAR(120) UNIQUE NOT NULL ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ DEFAULT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_tags_active ON tags(deleted_at) WHERE deleted_at IS NULL ;
