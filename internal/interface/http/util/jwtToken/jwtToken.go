@@ -4,9 +4,16 @@ import (
 	"errors"
 	"github.com/amir2002-js/digital-shop/internal/domain/users"
 	"github.com/form3tech-oss/jwt-go"
+	jwt2 "github.com/golang-jwt/jwt/v4"
 	"os"
 	"time"
 )
+
+type AccessTokenClaims struct {
+	UserID uint   `json:"user_id"`
+	Role   string `json:"role"`
+	jwt2.RegisteredClaims
+}
 
 func GenerateJWTRefreshTkn(user *users.User) (strToken string, err error) {
 	secretRefreshTkn := os.Getenv("REFRESH_TOKEN")

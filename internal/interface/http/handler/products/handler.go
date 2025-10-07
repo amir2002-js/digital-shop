@@ -2,10 +2,12 @@ package productsHandler
 
 import (
 	cacheService "github.com/amir2002-js/digital-shop/internal/services/cache"
+	productsService "github.com/amir2002-js/digital-shop/internal/services/products"
 	"github.com/go-playground/validator/v10"
 )
 
 type ProductsHandler struct {
+	h        *productsService.ProductsService
 	cache    *cacheService.RedisCacheServe
 	validate *validator.Validate
 }
