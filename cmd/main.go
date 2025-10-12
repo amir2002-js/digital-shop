@@ -2,9 +2,13 @@ package main
 
 import (
 	"context"
+	"github.com/amir2002-js/digital-shop/internal/interface/http/handler/gallery"
+	productsHandler "github.com/amir2002-js/digital-shop/internal/interface/http/handler/products"
 	cacheRepo "github.com/amir2002-js/digital-shop/internal/repository/cache"
 	repository "github.com/amir2002-js/digital-shop/internal/repository/postgres"
 	cacheService "github.com/amir2002-js/digital-shop/internal/services/cache"
+	galleryService "github.com/amir2002-js/digital-shop/internal/services/gallery"
+	productsService "github.com/amir2002-js/digital-shop/internal/services/products"
 	"log"
 	"os"
 	"os/signal"
@@ -29,9 +33,13 @@ func main() {
 	addrRedis := os.Getenv("REDIS_ADDR")
 
 	client := redis.NewClient(&redis.Options{
-		Addr:     addrRedis,
-		Password: passRedis,
-		DB:       0,
+		Addr:         addrRedis,
+		Password:     passRedis,
+		DB:           0,
+		PoolSize:     50,
+		MinIdleConns: 10,
+		ReadTimeout:  time.Second,
+		WriteTimeout: time.Second,
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -57,6 +65,10 @@ func main() {
 	if err != nil {
 		log.Fatal("failed to connect database")
 	}
+	sqlDB.SetMaxOpenConns(50)
+	sqlDB.SetMaxIdleConns(25)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+
 	migrationsPkg.RunMigrations(sqlDB)
 
 	validation := validator.New()
@@ -66,13 +78,23 @@ func main() {
 	cache := cacheRepo.NewRedisCacheRepo(client)
 
 	userServe := usersServices.NewUsersServices(dbRepo)
+	productServe := productsService.NewProductsService(dbRepo)
+	galleryServe := galleryService.NewGalleryService(dbRepo)
 	redisServe := cacheService.NewRedisCacheService(cache)
 
 	userHndlr := usersHandler.NewUsersHandler(userServe, redisServe, validation)
+	productHndlr := productsHandler.NewProductsHandler(productServe, redisServe, validation)
+	galleryHndlr := galleryHandler.NewGalleryHandler(galleryServe, redisServe, validation)
 
-	mainHandler := handler.NewHandler(userHndlr)
+	mainHandler := handler.NewHandler(userHndlr, productHndlr, galleryHndlr)
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		ReadTimeout:       3 * time.Second,
+		WriteTimeout:      3 * time.Second,
+		IdleTimeout:       5 * time.Second,
+		ReduceMemoryUsage: true,
+		AppName:           "DigitalShop",
+	})
 
 	http.Router(app, mainHandler)
 

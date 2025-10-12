@@ -1,6 +1,7 @@
 package usersHandler
 
 import (
+	"context"
 	"github.com/amir2002-js/digital-shop/internal/interface/http/util/jwtToken"
 	"github.com/amir2002-js/digital-shop/internal/interface/http/util/password"
 	"github.com/amir2002-js/digital-shop/internal/interface/http/util/returnsHandler"
@@ -8,6 +9,7 @@ import (
 	"github.com/microcosm-cc/bluemonday"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func (handler *UsersHandler) Login(c *fiber.Ctx) error {
@@ -32,7 +34,8 @@ func (handler *UsersHandler) Login(c *fiber.Ctx) error {
 	}
 
 	// پیدا کردن user
-	ctx := c.Context()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
 	foundedUser, err := handler.h.IsEmailExist(ctx, entryUser.Email)
 	if err != nil {
 		return returnsHandler.InternalError(c, err)

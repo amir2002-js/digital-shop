@@ -3,14 +3,14 @@ package productsService
 import (
 	"context"
 	"github.com/amir2002-js/digital-shop/internal/domain/products"
-	productsUsecase "github.com/amir2002-js/digital-shop/internal/usecase"
+	"github.com/amir2002-js/digital-shop/internal/usecase"
 )
 
 type ProductsService struct {
-	Repo productsUsecase.ProductsUseCase
+	Repo usecase.ProductsUseCase
 }
 
-func NewProductsService(repo productsUsecase.ProductsUseCase) *ProductsService {
+func NewProductsService(repo usecase.ProductsUseCase) *ProductsService {
 	return &ProductsService{
 		Repo: repo,
 	}

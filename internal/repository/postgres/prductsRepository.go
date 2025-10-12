@@ -22,7 +22,7 @@ func (r *GormDb) ReadAll(ctx context.Context) ([]products.Product, error) {
 
 func (r *GormDb) ReadById(ctx context.Context, id int) (*products.Product, error) {
 	var product products.Product
-	result := r.DB.WithContext(ctx).Model(&product).Where("id = ?", id).Find(&product)
+	result := r.DB.WithContext(ctx).Model(&product).Where("id = ?", id).Preload("Comments").Preload("Gallery").Find(&product)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			errContent := fmt.Sprintf("Product with id %d not found", id)

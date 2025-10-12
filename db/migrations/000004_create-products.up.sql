@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS products (
     id BIGSERIAL PRIMARY KEY ,
     name VARCHAR(225) NOT NULL ,
-    price_before_off NUMERIC(100,2) NOT NULL ,
-    price_after_off NUMERIC(100,2) NOT NULL ,
-    off NUMERIC(4,2) DEFAULT 0.0,
+    price_before_off NUMERIC(13,2) NOT NULL ,
+    discount NUMERIC(4,2) DEFAULT 0.0,
+    price_after_off NUMERIC(13,2) GENERATED ALWAYS AS (price_before_off - (price_before_off * discount / 100)) STORED,
     img_url TEXT[] NOT NULL DEFAULT '{}',
     CHECK ( ARRAY_LENGTH(img_url,1) BETWEEN 1 AND 5 ),
     description TEXT NOT NULL ,

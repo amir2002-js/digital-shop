@@ -12,8 +12,9 @@ type ProductsHandler struct {
 	validate *validator.Validate
 }
 
-func NewProductsHandler(cache *cacheService.RedisCacheServe, v *validator.Validate) *ProductsHandler {
+func NewProductsHandler(h *productsService.ProductsService, cache *cacheService.RedisCacheServe, v *validator.Validate) *ProductsHandler {
 	return &ProductsHandler{
+		h:        h,
 		cache:    cache,
 		validate: v,
 	}

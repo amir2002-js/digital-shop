@@ -1,11 +1,13 @@
 package usersHandler
 
 import (
+	"context"
 	"github.com/amir2002-js/digital-shop/internal/interface/http/util/jwtToken"
 	"github.com/amir2002-js/digital-shop/internal/interface/http/util/password"
 	"github.com/amir2002-js/digital-shop/internal/interface/http/util/whoIs"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/amir2002-js/digital-shop/internal/domain/users"
 	"github.com/amir2002-js/digital-shop/internal/interface/http/util/returnsHandler"
@@ -42,7 +44,8 @@ func (handler *UsersHandler) Register(c *fiber.Ctx) error {
 	}
 
 	// ایا ایمیل وجود داره؟
-	ctx := c.Context()
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
 	userFounded, err := handler.h.IsEmailExist(ctx, entryUser.Email)
 	if err != nil {
 		return returnsHandler.InternalError(c, err)
@@ -79,23 +82,40 @@ func (handler *UsersHandler) Register(c *fiber.Ctx) error {
 	user.HashedPass = hashedPass
 
 	// ساخت یوزر جدید
-	ctx = c.Context()
+	ctx, cancel = context.WithTimeout(context.Background(), 2*time.Second) // تعریف دوباره
+	defer cancel()
 	insertUser, err := handler.h.Register(ctx, user)
 	if err != nil {
 		return returnsHandler.CanNotConnectToDB(c, err)
 	}
 
 	// ساخت توکن accessTkn
-	accessTkn, err := jwtToken.GenerateJWTAccessTkn(insertUser)
-	if err != nil {
-		return returnsHandler.InternalError(c, err)
+	type tokenResult struct {
+		Token string
+		Err   error
 	}
+	accessCh := make(chan tokenResult, 1)
+	go func() {
+		accessTkn, err := jwtToken.GenerateJWTAccessTkn(insertUser)
+		accessCh <- tokenResult{Token: accessTkn, Err: err}
+	}()
 
 	// ساخت توکن refreshTkn
-	refreshTkn, err := jwtToken.GenerateJWTRefreshTkn(insertUser)
-	if err != nil {
-		return returnsHandler.InternalError(c, err)
+	refreshCh := make(chan tokenResult, 1)
+	go func() {
+		refreshTkn, err := jwtToken.GenerateJWTRefreshTkn(insertUser)
+		refreshCh <- tokenResult{Token: refreshTkn, Err: err}
+	}()
+
+	accessTknStruct := <-accessCh
+	refreshTknStruct := <-refreshCh
+
+	if accessTknStruct.Err != nil {
+		return returnsHandler.InternalError(c, accessTknStruct.Err)
 	}
 
-	return c.Status(http.StatusCreated).JSON(fiber.Map{"data": insertUser, "access_token": accessTkn, "refresh_token": refreshTkn})
+	if refreshTknStruct.Err != nil {
+		return returnsHandler.InternalError(c, refreshTknStruct.Err)
+	}
+	return c.Status(http.StatusCreated).JSON(fiber.Map{"data": insertUser, "access_token": accessTknStruct.Token, "refresh_token": refreshTknStruct.Token})
 }
