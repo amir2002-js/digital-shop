@@ -75,6 +75,7 @@ func (handler *ProductsHandler) Update(c *fiber.Ctx) error {
 		productFind.Stock = stockUint
 	}
 
+	// اپدیت در db
 	ctx = c.UserContext()
 	err = handler.h.Update(ctx, productFind)
 	if err != nil {

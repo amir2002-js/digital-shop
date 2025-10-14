@@ -19,6 +19,7 @@ func (handler *GalleryHandler) AddToGallery(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "invalid or empty productId"})
 	}
 
+	isItMain := c.Query("is_main", "false")
 	ctx := c.UserContext()
 	galleryArr, err := handler.h.GetImageByProductId(ctx, productId)
 	if err != nil {
@@ -37,7 +38,17 @@ func (handler *GalleryHandler) AddToGallery(c *fiber.Ctx) error {
 	var newImageOfGallery gallery.Gallery
 
 	newImageOfGallery.Url = imgURL
-	newImageOfGallery.IsMain = false
+	if isItMain == "true" {
+		newImageOfGallery.IsMain = true
+		for _, galleryItem := range galleryArr {
+			if galleryItem.IsMain == true {
+				newImageOfGallery.IsMain = false
+				break
+			}
+		}
+	} else {
+		newImageOfGallery.IsMain = false
+	}
 	newImageOfGallery.ProductId = uint(productId)
 
 	err = handler.h.AddToGallery(ctx, &newImageOfGallery)
