@@ -10,7 +10,7 @@ import (
 
 func (r *GormDb) ReadAll(ctx context.Context) ([]products.Product, error) {
 	var allProducts []products.Product
-	result := r.DB.WithContext(ctx).Model(&products.Product{}).Find(&allProducts)
+	result := r.DB.WithContext(ctx).Model(&products.Product{}).Preload("Gallery", "is_main = (?)", true).Find(&allProducts)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return allProducts, errors.New("products not available")

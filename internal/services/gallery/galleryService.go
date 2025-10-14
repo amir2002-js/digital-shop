@@ -23,3 +23,7 @@ func (g *GalleryService) AddToGallery(ctx context.Context, img *gallery.Gallery)
 func (g *GalleryService) RemoveFromGallery(ctx context.Context, id int) error {
 	return g.Repo.RemoveFromGallery(ctx, id)
 }
+
+func (g *GalleryService) GetImageByProductId(ctx context.Context, id int) ([]gallery.Gallery, error) {
+	return g.Repo.GetImageByProductId(ctx, id)
+}
