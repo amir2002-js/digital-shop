@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/amir2002-js/digital-shop/internal/domain/Tags"
 	"github.com/amir2002-js/digital-shop/internal/domain/products"
+	producttags "github.com/amir2002-js/digital-shop/internal/domain/productsTags"
 	"gorm.io/gorm"
 )
 
@@ -56,4 +58,26 @@ func (r *GormDb) Delete(ctx context.Context, id int) error {
 		return result.Error
 	}
 	return nil
+}
+
+func (r *GormDb) AddToTags(ctx context.Context, tags []producttags.ProductTag) error {
+	db := r.DB.WithContext(ctx).Model(&producttags.ProductTag{})
+	for _, tag := range tags {
+		result := db.Create(&tag)
+		if result.Error != nil {
+			return result.Error
+		}
+	}
+	return nil
+}
+
+func (r *GormDb) FindTag(ctx context.Context, tagID int) (bool, error) {
+	result := r.DB.WithContext(ctx).Model(&Tags.Tag{}).Where("id = ?", tagID).Find(&Tags.Tag{})
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, result.Error
+	}
+	return true, nil
 }

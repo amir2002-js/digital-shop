@@ -3,6 +3,7 @@ package productsService
 import (
 	"context"
 	"github.com/amir2002-js/digital-shop/internal/domain/products"
+	producttags "github.com/amir2002-js/digital-shop/internal/domain/productsTags"
 	"github.com/amir2002-js/digital-shop/internal/usecase"
 )
 
@@ -34,4 +35,12 @@ func (serve *ProductsService) Delete(ctx context.Context, productId int) error {
 
 func (serve *ProductsService) ReadAll(ctx context.Context) ([]products.Product, error) {
 	return serve.Repo.ReadAll(ctx)
+}
+
+func (serve *ProductsService) AddToTags(ctx context.Context, tags []producttags.ProductTag) error {
+	return serve.Repo.AddToTags(ctx, tags)
+}
+
+func (serve *ProductsService) FindTag(ctx context.Context, tagID int) (bool, error) {
+	return serve.Repo.FindTag(ctx, tagID)
 }
