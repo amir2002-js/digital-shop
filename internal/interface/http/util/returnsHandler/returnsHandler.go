@@ -24,3 +24,7 @@ func AlreadyExisted(c *fiber.Ctx) error {
 func InternalError(c *fiber.Ctx, err error) error {
 	return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"error": "internal error", "message": err.Error()})
 }
+
+func NotAdminErrorAccess(c *fiber.Ctx) error {
+	return c.Status(http.StatusForbidden).JSON(fiber.Map{"error": "you are not admin"})
+}

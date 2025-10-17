@@ -4,11 +4,13 @@ import (
 	"context"
 	"github.com/amir2002-js/digital-shop/internal/interface/http/handler/gallery"
 	productsHandler "github.com/amir2002-js/digital-shop/internal/interface/http/handler/products"
+	tagsHandler "github.com/amir2002-js/digital-shop/internal/interface/http/handler/tags"
 	cacheRepo "github.com/amir2002-js/digital-shop/internal/repository/cache"
 	repository "github.com/amir2002-js/digital-shop/internal/repository/postgres"
 	cacheService "github.com/amir2002-js/digital-shop/internal/services/cache"
 	galleryService "github.com/amir2002-js/digital-shop/internal/services/gallery"
 	productsService "github.com/amir2002-js/digital-shop/internal/services/products"
+	tagService "github.com/amir2002-js/digital-shop/internal/services/tags"
 	"log"
 	"os"
 	"os/signal"
@@ -80,13 +82,15 @@ func main() {
 	userServe := usersServices.NewUsersServices(dbRepo)
 	productServe := productsService.NewProductsService(dbRepo)
 	galleryServe := galleryService.NewGalleryService(dbRepo)
+	tagsServe := tagService.NewTagService(dbRepo)
 	redisServe := cacheService.NewRedisCacheService(cache)
 
 	userHndlr := usersHandler.NewUsersHandler(userServe, redisServe, validation)
 	productHndlr := productsHandler.NewProductsHandler(productServe, redisServe, validation)
 	galleryHndlr := galleryHandler.NewGalleryHandler(galleryServe, redisServe, validation)
+	tagsHndlr := tagsHandler.NewTagsHandler(tagsServe, redisServe, validation)
 
-	mainHandler := handler.NewHandler(userHndlr, productHndlr, galleryHndlr)
+	mainHandler := handler.NewHandler(userHndlr, productHndlr, galleryHndlr, tagsHndlr)
 
 	app := fiber.New(fiber.Config{
 		ReadTimeout:       3 * time.Second,
