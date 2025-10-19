@@ -1,11 +1,12 @@
 package tagsHandler
 
 import (
+	"net/http"
+	"strings"
+
 	"github.com/amir2002-js/digital-shop/internal/interface/http/util/returnsHandler"
 	"github.com/gofiber/fiber/v2"
 	"github.com/microcosm-cc/bluemonday"
-	"net/http"
-	"strings"
 )
 
 func (handler *TagsHandler) Create(c *fiber.Ctx) error {
@@ -36,6 +37,6 @@ func (handler *TagsHandler) Create(c *fiber.Ctx) error {
 	if err != nil {
 		return returnsHandler.CanNotConnectToDB(c, err)
 	}
-	
+
 	return c.Status(http.StatusCreated).JSON(fiber.Map{"data": tag})
 }

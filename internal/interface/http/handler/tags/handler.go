@@ -1,14 +1,15 @@
 package tagsHandler
 
 import (
-	cacheService "github.com/amir2002-js/digital-shop/internal/services/cache"
+	"github.com/amir2002-js/digital-shop/internal/services/cache"
 	tagService "github.com/amir2002-js/digital-shop/internal/services/tags"
 	"github.com/go-playground/validator/v10"
+	"github.com/rogpeppe/go-internal/cache"
 )
 
 type TagsHandler struct {
 	h        *tagService.TagService
-	cache    *cacheService.RedisCacheServe
+	cache    *cache.RedisCacheServe
 	validate *validator.Validate
 }
 
